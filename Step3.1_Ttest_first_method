@@ -62,8 +62,8 @@ testT<- function(m) {
   names<-unlist(lapply(1:100, function(f) rownames(zbior_uczacy[which(unlist(statystykaT_abs)==znaczace100[f]),]))) #szukam który to numer sondy
 }
 
-## Pętla dla wszystkich procesow
-## Na zbiorze uczączym wykonuje test T, redukuje ilosc cech za pomoca wyboru 100 najczęstszych genow ktore nastepnie ida do SVM 
+## Petla dla wszystkich procesow
+## Na zbiorze uczacym wykonywany jest test T, redukowana ilosc cech za pomoca wyboru 100 najczestszych genow ktore nastepnie przekazywane sa do SVM 
 
 for (i in 1:30){  
   
@@ -101,7 +101,7 @@ for (i in 1:30){
   
   ## SVM
   
-  # Buduje model SVM
+  # Zbudowanie modelu SVM
   calosc<-zbior_uczacy[unikalne100,]
   
   f<-factor(grupy_nowe)
@@ -137,7 +137,6 @@ for (i in 1:30){
   saveRDS(przewidziane_klasy,'przewidziane_klasy123.rds')
   saveRDS(model_a_prawidlowa_klasa,"model_a_prawidlowa_klasa123.rds")
   saveRDS(poprawnosc_modelu,"poprawnosc_modelu123.rds")
-  
 }
 
 
