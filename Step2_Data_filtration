@@ -6,6 +6,7 @@ BEusuniety<-readRDS("z_korekta_batch_effect.rds")  #dane po preprocessingu pliko
 
 
 ## FILTRACJA 1- usuniecie 50% odczytów o najnizszej sredniej intensywnosci sygnalu; na danych zlogarytmizowanych 
+
 #Srednia po cechach
 BEpozostal_srednia <- rowMeans(BEpozostal)  
 BEusuniety_srednia <- rowMeans(BEusuniety)
@@ -44,18 +45,18 @@ etap1BEusuniety<- BEusuniety[which(BEusuniety_srednia>= BEusuniety_pp),] #18291
 BEpozostal_war<- rowVars(etap1BEpozostal)
 BEusuniety_war<- rowVars(etap1BEusuniety)
 
-#Zapis wariancji do txt -> aby moc wgrać te pliki do programu GaMRed
+#Zapis wariancji do txt -> aby moc wgrac te pliki do programu GaMRed
 write.table(BEpozostal_war, file="wariancja_BEpozostal.txt",append = FALSE, sep="\t", dec = ".",
             row.names = TRUE, col.names = TRUE)
 
 write.table(BEusuniety_war, file="wariancja_BEusuniety.txt",append = FALSE, sep="\t", dec = ".",
             row.names = TRUE, col.names = TRUE)
 
-#Drugi punkt przecięcia 
+#Drugi punkt przeciecia 
 BEpozostal_pp2<-0.0807
 BEusuniety_pp2<-0.1799
 
-#Usuniecie danych na podstawie wyznaczonego punktu przecięcia 
+#Usuniecie danych na podstawie wyznaczonego punktu przeciwcia 
 etap2BEpozostal<- etap1BEpozostal[which(BEpozostal_war>= BEpozostal_pp2),] #15683
 etap2BEusuniety<- etap1BEusuniety[which(BEusuniety_war>= BEusuniety_pp2),] #9531
 
