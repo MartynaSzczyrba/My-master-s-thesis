@@ -82,8 +82,8 @@ FitFun<- function(population){
   return(-BIC.f)
 }
 
-## Pętla dla wszystkich procesow
-## Na zbiorze uczaczym wykonuje test T, redukuje ilosc cech za pomoca GA ktore nastepnie przekazywane sa do SVM 
+## Petla dla wszystkich procesow
+## Na zbiorze uczaczym wykonywany jest test T, redukukowana ilosc cech za pomoca GA ktore nastepnie przekazywane sa do SVM 
 
 for (i in 1:30){ 
   
@@ -91,7 +91,7 @@ for (i in 1:30){
   zbior_uczacy<-dane[(-folds[[i]])] #uczący
   zbior_testowy<-dane[folds[[i]]] #testowy
   
-  #Usuwanie z 'pogrupowane' pliki ktore sa w zbiorze testowym 
+  #Usuwanie z 'pogrupowane' plikow ktore sa w zbiorze testowym 
   grupy_nowe<-grupy[-folds[[i]]] 
   grupy_usuniete<-grupy[folds[[i]]] 
   unikalne_nowe<-unique(grupy_nowe) 
@@ -136,9 +136,7 @@ for (i in 1:30){
   wynik_GA[[i]]<-wynik
   cechy_koncowe_do_svm[[i]] <- wybrane_do_SVM
   
-  
   ## SVM
-  
   # Zbudowanie modelu SVM
   calosc<-zbior_uczacy[wybrane,]
   
