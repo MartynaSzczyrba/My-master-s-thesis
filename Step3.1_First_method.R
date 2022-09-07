@@ -1,3 +1,5 @@
+# Metoda opiera sie na przeprowadzeniu testu t-Studenta a nastepnie wybraniu 100 najczestszych genow. Tak wyselekcjonowane cechy przekazywane sa do SVM. 
+
 # Tym kodem analizowany jest zbior:
 # 1: dane z filtracją typu 50 % i bez korekty batch effect   
 # 2: dane z filtracją typu 50 % i z korekta batch effect     
