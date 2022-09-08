@@ -24,10 +24,10 @@ nazwy <- paste(plik$GSM,sep='')
 unikalne<-unique(grupy) #nazwy wszyskich grup
 pogrupowane <- lapply(1:length(unikalne), function(i) dane[,which(grupy==unikalne[i])])
 
-#Detekcja liczby corów potrzebna do operacji zrównoleglania 
+#Detekcja liczby corow potrzebna do operacji zrownoleglania 
 no_cores <- detectCores() - 1 
 
-#Ustawienie ziarna w celu wygenerowania powtarzalnego losowego pobierania próbek 
+#Ustawienie ziarna w celu wygenerowania powtarzalnego losowego pobierania probek 
 set.seed(130)
 
 #Zmienne do zapisywania wynikow
@@ -56,23 +56,23 @@ for (i in 1:30){
   ### ----- Test1: KRUSKAL-WALLIS
   # Testowane hipotezy: nie sprawdzamy, która grupa się różni a jedynie czy wogóle się jakaś wyróżnia!
   #HO:  występuje równość dystrybuant rozkładów w porównywanych populacjach (grupy nie różnią się od siebie w sposób istotny statystycznie)
-  #HA:  nie ma równości dystrybuant rozkładów w porównywanych populacjach (co najmniej jedna z grup różni się istotnie od innych )
+  #HA:  nie ma równości dystrybuant rozkładów w porównywanych populacjach (co najmniej jedna z grup różni się istotnie od innych)
   
-  #1. Usuwam z 'pogrupowane' pliki ktore są w zbiorze testowym 
+  #1. Usuwanie z 'pogrupowane' plikow ktore sa w zbiorze testowym 
   grupy_nowe<-grupy[-folds1[[i]]] 
   unikalne_nowe<-unique(grupy_nowe) 
   pogrupowane_nowe <- lapply(1:length(unikalne_nowe), function(k) zbior_uczacy[,which(grupy_nowe==unikalne_nowe[k])] ) 
   
   grupy_usuniete<-grupy[folds1[[i]]] 
   
-  #2.Porównuje cechę 1 pomiędzy wszystkimi grupami, 2,3....
+  #2.Porownanie cechy 1 pomiedzy wszystkimi grupami; potem chechy 2,3 itd.
   testKW<- function(m) {
-    cecha <- lapply(1:length(unikalne), function(k) pogrupowane_nowe[[k]][m,] ) #wszystkie grupy, cecha 1... RUSZAM TYLKO CECHY BO GRUPY SPRAWDZAM WSZYSTKIE JEDNOCZESNIE !!!
+    cecha <- lapply(1:length(unikalne), function(k) pogrupowane_nowe[[k]][m,] ) #wszystkie grupy, cecha 1... RUSZAMY TYLKO CECHY BO GRUPY SPRAWDZAMY WSZYSTKIE JEDNOCZESNIE !!!
     testKW_wyniki<- kruskal.test(cecha)
     p_wartoscKW<- testKW_wyniki$p.value 
   }
 
-  #Proces zrównoleglania 
+  #Proces zrOwnoleglania 
   start.time <- proc.time()
   registerDoParallel(cores=no_cores)  
   cl <- makePSOCKcluster(no_cores)  
@@ -91,25 +91,25 @@ for (i in 1:30){
   #3. Korekta na wielokrotne testowanie -> Benjamini Hochberg
   p_wartosciKW_PoKorekcji<- p.adjust(p_wartosciKW, method='hb')
   
-  #4. Sprawdzenie które cechy mają pwartość większa niż alfa -> one nas nie interesują bo są nieróżnicujące
-  ktoreH0<-which(p_wartosciKW_PoKorekcji>=0.05) #nie różnicują; brak podstaw do odrzucenia H0; p-wartośc> 0.05
+  #4. Sprawdzenie ktore cechy maja pwartosc wieksza niż alfa -> one nas nie interesuja bo są nieroznicujące
+  ktoreH0<-which(p_wartosciKW_PoKorekcji>=0.05) #nie roznicuja; brak podstaw do odrzucenia H0; p-wartośc> 0.05
   
-  #5. Usunięcie ich
+  #5. Usuniecie ich
   skorygowane_KW<-zbior_uczacy[-ktoreH0,] #usuwam wiersze
   
-  #6. Na nowo grupuje wszystkie dane ale nie będziemy już w nich mieli cech, które nie różnicowały (nie różniły się między sobą w grupie)
+  #6. Na nowo grupujemy wszystkie dane ale nie bedziemy juz w nich mieli cech, ktore nie roznicowaly (nie roznily się miedzy sobą w grupie)
   pogrupowane_KW <- lapply(1:length(unikalne_nowe), function(i) skorygowane_KW[,which(grupy_nowe==unikalne_nowe[i])] ) #TERAZA PRACUJE NA TEJ ZMIENNEJ !!!
   
   
-  ### ------- Test2: DUNN -> porównanie każdej pary z każdą 
-  #H0: prawdopodobieństwo zaobserwowania losowej wartości w pierwszej grupie, która jest większa niż losowa wartość w drugiej grupie, wynosi połowę
+  ### ------- Test2: DUNN -> porownanie kazdej pary z kazda 
+  #H0: prawdopodobieństwo zaobserwowania losowej wartosci w pierwszej grupie, ktora jest wieksza niz losowa wartosc w drugiej grupie, wynosi polowe
 
   testDunn<- function(j) {
-    cecha <- lapply(1:length(pogrupowane_KW), function(k) pogrupowane_KW[[k]][j,] )   #z każdej frupy biorę ceche równą il k to numer grupy
-    wynikiDunn <- dunn.test(cecha,method="bh",list = "FALSE",table="FALSE") #tutaj wkładam np. cecha1 dla wszystkich grup 
+    cecha <- lapply(1:length(pogrupowane_KW), function(k) pogrupowane_KW[[k]][j,] )   #z kazdej grupy bierzemy ceche równą j; k to numer grupy
+    wynikiDunn <- dunn.test(cecha,method="bh",list = "FALSE",table="FALSE") #tutaj wkladamy np. cecha1 dla wszystkich grup 
   }
   
-  #1. Proces zrównoleglania 
+  #1. Proces zrownoleglania 
   start.time <- proc.time()
   registerDoParallel(cores=no_cores)  
   cl <- makePSOCKcluster(no_cores)  
@@ -123,7 +123,7 @@ for (i in 1:30){
   print(run.time)
   stopCluster(cl)  
   
-  #2. Proces intepretacji wyników (dokłanie opisany w pracy)
+  #2. Proces intepretacji wynikow (doklanie opisany w pracy)
   kombinacje<-combn(1:18,2)
   
   roznicujacy_gen_Dunn<-list()
@@ -132,10 +132,10 @@ for (i in 1:30){
     dana_cecha<-wynikiDunna[[d]]$P.adjusted
     cecha_decyzje<-ifelse(dana_cecha>0.05/2,0,1)  #H0=0, HA=1;  dostaje 153: 0 albo 1
     
-    #teraz schodzimy niżej - do każdej kombinacji ale DLA TEJ SAMEJ CECHY 
+    #teraz schodzimy nizej - do kazdej kombinacji ale DLA TEJ SAMEJ CECHY 
     jest<- 0
-    for (c in 1:length(unikalne)){ # po każdej grupie czyli 1:18 
-      if (jest==0){ #to pomaga nie robić kolejnyh sprawdzen jesli gen jest już w liście różnicujacych 
+    for (c in 1:length(unikalne)){ # po kazdej grupie czyli 1:18 
+      if (jest==0){ #to pomaga nie robic kolejnyh sprawdzen typu jesli gen jest juz w liscie roznicujacych 
         
         #szukam kombinacji danej grupy w obu wierszach
         numerV1<-as.numeric(which(kombinacje[1,]==c))
@@ -143,10 +143,10 @@ for (i in 1:30){
         numery<-c(numerV1,numerV2)
         
         #teraz przechodze do p-wartosci pod 'numery' i sprawdzam czy mamy Ha dla kazdej pary 
-        wybrane_pwartosci<-cecha_decyzje[numery] #wycigam tylko kombinacje z intersujcą mnie grupą 
+        wybrane_pwartosci<-cecha_decyzje[numery] #wycigam tylko kombinacje z intersujcą mnie grupa 
         ileHA<-sum(wybrane_pwartosci)
         
-        #jesli roznucuje to mam sume taką jak ilość kombinacji z tą grupą 
+        #jesli roznucuje to mam sume taka jak ilosc kombinacji z ta grupa 
         if (ileHA==length(numery)){
           roznicujacy_gen_Dunn[[d]]<-rownames(skorygowane_KW)[d] 
           jest<-1
@@ -162,7 +162,7 @@ for (i in 1:30){
   cechy_koncowe_do_svm[[i]]<-unlist(roznicujacy_gen_Dunn)
   
   
-  ###---- WYBRANE CECHY IDĄ DO SVM JAKO ZBIÓR UCZĄCY 
+  ###---- WYBRANE CECHY IDĄ DO SVM JAKO ZBIOR UCZACY 
   
   #1. Budujemy model SVM
   g<-as.data.frame(cbind(t(pelneD),grupy_nowe))
@@ -195,7 +195,7 @@ for (i in 1:30){
 }
 
 
-#Zapis wyników 
+#Zapis wynikow 
 saveRDS(cechy_koncowe_do_svm,'cechy_koncowe_do_svm.rds')
 saveRDS(model_a_prawidlowa_klasa,'model_a_prawidlowa_klasa.rds')
 saveRDS(poprawnosc_modelu,'poprawnosc_modelu.rds')
