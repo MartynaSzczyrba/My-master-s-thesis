@@ -1,4 +1,4 @@
-# Metoda opiera sie na przeprowadzeniu testu t-Studenta a nastepnie algorytmu genetycznego. Tak wyselekcjonowane cechy przekazywane są do SVM. 
+### Metoda opiera sie na przeprowadzeniu testu t-Studenta a nastepnie algorytmu genetycznego. Tak wyselekcjonowane cechy przekazywane są do SVM. 
 
 # Tym kodem analizowany jest zbior:
 # 1: dane z filtracja typu 50 % i bez korekty batch effect   
