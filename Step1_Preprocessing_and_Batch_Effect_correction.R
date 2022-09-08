@@ -1,4 +1,4 @@
-### Skrypt umozliwia pobranie i rozpakowanie danych, wczytanie do środowsika a następnie wykonanie analizy nizszego rzedu i korekty efektu paczki. 
+### Skrypt umozliwia pobranie i rozpakowanie danych, wczytanie do srodowsika a nastepnie wykonanie analizy nizszego rzedu i korekty efektu paczki. 
 
 setwd("C:/Users/marty/Desktop/Praca magisterska/analiza_w_R/dane") 
 
