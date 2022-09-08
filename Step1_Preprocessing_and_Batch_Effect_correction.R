@@ -1,3 +1,5 @@
+### Skrypt umozliwia pobranie i rozpakowanie danych, wczytanie do środowsika a następnie wykonanie analizy nizszego rzedu i korekty efektu paczki. 
+
 setwd("C:/Users/marty/Desktop/Praca magisterska/analiza_w_R/dane") 
 
 ## Instalacja pakietow
