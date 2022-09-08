@@ -1,4 +1,4 @@
-#Sktypt umozliwia przetworzenie wynikow i wyliczenie dokladnosci klasyfikacji kazdego z analizowanych podejść 
+#Sktypt umozliwia przetworzenie wynikow i wyliczenie wskaznikow jakosci klasyfikacji kazdego z analizowanych podejsc
 
 ## Wczytanie pliku w celu uzyskania nazw wszytkich analizowanych grup 
 setwd("C:/Users/marty/Desktop/Praca magisterska/analiza_w_R/dane") 
