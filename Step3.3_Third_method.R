@@ -1,4 +1,4 @@
-#Metoda opiera sie na przeprowadzeniu testu Kruskala-Wallisa a następnie testu Dunna (testu post-hoc). Tak wyselekcjonowane cechy przekazywane są do SVM. 
+### Metoda opiera sie na przeprowadzeniu testu Kruskala-Wallisa a następnie testu Dunna (testu post-hoc). Tak wyselekcjonowane cechy przekazywane są do SVM. 
 
 # Tym kodem analizowany jest zbior:
 # 3: dane z filtracja typu 50 % i bez korekty batch effect   (dane <- readRDS("BEpozostal_filtracja50.rds"))
