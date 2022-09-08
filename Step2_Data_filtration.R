@@ -1,3 +1,6 @@
+### Skrypt umozliwia przeporowadzenie dwoch roznych filtracji. Pierwsza polega nausunieciu 50% odczytow o najnizszej sredniej intensywnosci sygnalu. Druga to filtracja adaptacyjna oparta o dekompozycje mieszaniny Gaussa
+
+
 setwd("C:/Users/marty/Desktop/Praca magisterska/analiza_w_R/dane")
 
 ## Wgranie danych z kroku 1
@@ -5,7 +8,7 @@ BEpozostal<-as.matrix(readRDS("ekspresja_wszystkich.rds"))    #dane(informacje o
 BEusuniety<-readRDS("z_korekta_batch_effect.rds")  #dane po preprocessingu plikow Z usunietym efektem paczki
 
 
-## FILTRACJA 1- usuniecie 50% odczytów o najnizszej sredniej intensywnosci sygnalu; na danych zlogarytmizowanych 
+## FILTRACJA 1- usuniecie 50% odczytow o najnizszej sredniej intensywnosci sygnalu; na danych zlogarytmizowanych 
 
 #Srednia po cechach
 BEpozostal_srednia <- rowMeans(BEpozostal)  
@@ -24,7 +27,7 @@ saveRDS(BEpozostal_wynikiFiltracji50,file="BEpozostal_filtracja50.rds")
 saveRDS(BEusuniety_wynikiFilttracji50,file="BEusuniety_filtracja50.rds")
 
 
-## FILTRACJA 2 - filtracja adaptacyjna oparta o dekompozycje mieszaniny Gaussa (progi wyznaczane za pomocą programu GaMRed, ktory dziala w srodowisku Matlab)
+## FILTRACJA 2 - filtracja adaptacyjna oparta o dekompozycje mieszaniny Gaussa (progi wyznaczane za pomoca programu GaMRed, ktory dziala w srodowisku Matlab)
 
 #Zapis srednich do txt -> aby moc wgrac te pliki do programu GaMRed
 write.table(BEpozostal_srednia, file="srednia_BEpozostal.txt",append = FALSE, sep="\t", dec = ".",
