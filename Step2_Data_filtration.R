@@ -1,4 +1,5 @@
-### Skrypt umozliwia przeporowadzenie dwoch roznych filtracji. Pierwsza polega nausunieciu 50% odczytow o najnizszej sredniej intensywnosci sygnalu. Druga to filtracja adaptacyjna oparta o dekompozycje mieszaniny Gaussa
+### Skrypt umozliwia przeporowadzenie dwoch roznych filtracji. 
+### Pierwsza polega na usunieciu 50% odczytow o najnizszej sredniej intensywnosci sygnalu. Druga to filtracja adaptacyjna oparta o dekompozycje mieszaniny Gaussa
 
 
 setwd("C:/Users/marty/Desktop/Praca magisterska/analiza_w_R/dane")
