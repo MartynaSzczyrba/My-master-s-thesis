@@ -1,3 +1,5 @@
+#Sktypt umozliwia przetworzenie wynikow i wyliczenie dokladnosci klasyfikacji kazdego z analizowanych podejść 
+
 ## Wczytanie pliku w celu uzyskania nazw wszytkich analizowanych grup 
 setwd("C:/Users/marty/Desktop/Praca magisterska/analiza_w_R/dane") 
 
@@ -7,7 +9,7 @@ nazwy <- paste(plik$GSM,sep='')
 unikalne<-as.data.frame(unique(grupy)) #nazwy wszystkich grup
 colnames(unikalne)<-"pelna nazwa"
 
-## Wszystkie potrzebne ścieżki
+## Wszystkie potrzebne sciezki (wyniki dla kazdego z podejesc przechowywyano w osobnym folderze)
 zbior1GA<-"C:/Users/marty/Desktop/Praca magisterska/analiza_w_R/dane/A_Zbior1_unikatowe+GA"
 zbior1_100<-"C:/Users/marty/Desktop/Praca magisterska/analiza_w_R/dane/A_Zbior1_najczestszych100"
 zbior2GA<-"C:/Users/marty/Desktop/Praca magisterska/analiza_w_R/dane/A_Zbior2_unikatowe+GA"
@@ -18,24 +20,23 @@ zbior5<-"C:/Users/marty/Desktop/Praca magisterska/analiza_w_R/dane/A_Zbior5"
 zbior6<-"C:/Users/marty/Desktop/Praca magisterska/analiza_w_R/dane/A_Zbior6"
 setwd(zbior6)
 
+## GLOWNA CZESC PODSUMOWUJACA WYNIKI (WYNIKIEM JESTE TABELA)
+#wiersze - klasy jakie powinny wychodzic
+#kolumny - klasy jakie przydzielil SVM
 
-## Główna część podsumowująca wyniki (tabela)
-#wiersze - klasy jakie powinny wychodzić 
-#kolumny - klasy jakie przydzielił SVM
-
-nazwy<-c("model_a_prawidlowa_klasa123.rds","model_a_prawidlowa_klasa125.rds","model_a_prawidlowa_klasa130.rds") #zmienne przechowujace informacje o prawidłowej klasie i predykcji
+nazwy<-c("model_a_prawidlowa_klasa123.rds","model_a_prawidlowa_klasa125.rds","model_a_prawidlowa_klasa130.rds") #zmienne przechowujace informacje o prawidlowej klasie i predykcji
 wyniki<-list()
 
-for (m in 1:3){ #bo mieliśmy 3 krotną walidację krzyżową 
+for (m in 1:3){ #bo przeprowadzano 3 krotna walidacje krzyzowa dla kazdego z analizowanych podejsc 
   klasyAmodel<-readRDS(nazwy[m])
   
-  # macierz w której zapisywane będą wyniki 
+  # macierz w ktorej zapisywane beda wyniki 
   wyniki1<-matrix(0,ncol=20,nrow=18)
   rownames(wyniki1)<-c(1:18)
   colnames(wyniki1)<-c("Diagnozis",1:18,"Total No of Sample")
   wyniki1[,1]<-unikalne$`pelna nazwa`
   
-  # uzupełnianie macierzy
+  # uzupelnianie macierzy
   for (i in 1:30){
     macierz<-klasyAmodel[[i]]
     for (j in 1:dim(macierz)[1]){
@@ -43,7 +44,7 @@ for (m in 1:3){ #bo mieliśmy 3 krotną walidację krzyżową
       klasa_Svm<-as.character(macierz[j,2]) #kolumna +1
       
       wiersz<-which(klasa_poprawna==unikalne$`pelna nazwa`)
-      kolumna<-which(klasa_Svm==unikalne$`pelna nazwa`) +1 #bo jest dodatkowa kolumnę z diagnozą więc wszystko przesuwa sie o 1
+      kolumna<-which(klasa_Svm==unikalne$`pelna nazwa`) +1 #bo jest dodatkowa kolumna z nazwa diagnozy wiec wszystko przesuwa sie o 1
       
       wyniki1[wiersz,kolumna]<-as.numeric(wyniki1[wiersz,kolumna])+1
     }
@@ -56,7 +57,7 @@ for (m in 1:3){ #bo mieliśmy 3 krotną walidację krzyżową
   rm(wyniki1) 
 }
 
-## Średnia z trzech tabel
+## Srednia z trzech tabel
 wyniki_podsumowanie<-matrix(ncol=20,nrow = 18)
 rownames(wyniki_podsumowanie)<-c(1:18)
 colnames(wyniki_podsumowanie)<-c("Diagnozis",1:18,"Total No of Sample")
@@ -69,7 +70,7 @@ for (i in 1:dim(wyniki_podsumowanie)[1]){
   wyniki_podsumowanie[i,20]<-round(sum(as.numeric(wyniki_podsumowanie[i,2:19])),1)
 }
 
-## Wczytane grupy były w odwrotnej kolejności w porównaniu do publikacji z kórymi porównywano wyniki, tymi operacjami chciano więc je uporządkować 
+## Wczytane grupy były w odwrotnej kolejności w porównaniu do publikacji z kórymi porownywano wyniki, tymi operacjami chciano wiec je uporzadkowac
 flip <- function(data) {
   new <- data[rev(rownames(data)), ]
   rownames(new) <- NULL
@@ -88,12 +89,12 @@ flip <- function(data) {
 }
 
 poprawna_kolejnosc<-flip(wyniki_podsumowanie)
-#poprawna_kolejnosc[poprawna_kolejnosc == 0] <- "-" 
+#poprawna_kolejnosc[poprawna_kolejnosc == 0] <- "-" #chciano any zera w tabelece byly zastapione zankiem -
 
 
-################## WSKAŹNIKI JAKOŚCI ###################
+## WYLICZENIE WSKAZNIKOW JAKOSCI 
 
-## NAJPIERW TRZEBA WYLICZYĆ ILE TP, TN, FP, FN 
+## Nalezalo rozpoczac od wyliczenia ilosci TP,TN,FP,FN
 
 odwrocone<-rev(unikalne$`pelna nazwa`)
 
@@ -101,7 +102,7 @@ macierz_pomylek<-as.data.frame(matrix(0,nrow = 18,ncol = 4))
 rownames(macierz_pomylek)<-odwrocone
 colnames(macierz_pomylek)<-c("TP","TN","FP","FN")
 
-for (m in 1:3){ # bo dla każdego wyniku walidacji 
+for (m in 1:3){ # bo dla kazdego wyniku walidacji 
   klasyAmodel<-readRDS(nazwy[m])
   
   for (i in 1:length(klasyAmodel)){ # 30 bo dla każdego pojedyńczego wyniku 
@@ -109,7 +110,7 @@ for (m in 1:3){ # bo dla każdego wyniku walidacji
     for (k in 1:18){ #Sprawdzam każdą klasę osobną (czyli 18)
       C<-odwrocone[k] #tę klasę aktualnie zliczamy 
       
-      for (j in 1: dim(klasyAmodel[[i]])[1]) { #iteruje po wszystkich wierszach aby dla każdego określić TP,TN,FP,FN
+      for (j in 1: dim(klasyAmodel[[i]])[1]) { #iteruje po wszystkich wierszach aby dla kazdego określić TP,TN,FP,FN
         
         klasa_poprawna<-as.character( klasyAmodel[[i]][j,1]) #czyli ta z pierwszej kolumny
         klasa_przewidziana<-as.character(klasyAmodel[[i]][j,2]) #ta z drugiej kolumny
@@ -118,20 +119,18 @@ for (m in 1:3){ # bo dla każdego wyniku walidacji
           macierz_pomylek[k,1]=macierz_pomylek[k,1]+1
         }else if (klasa_poprawna==C & klasa_przewidziana!=C){ #FN - C1 klasyfikowane jako inna klasa 
           macierz_pomylek[k,4]=macierz_pomylek[k,4]+1
-        }else if (klasa_poprawna!=C & klasa_przewidziana!=C){ #TN - klasy inne niż C1, klasyfowane jako klasy inne niż C1
+        }else if (klasa_poprawna!=C & klasa_przewidziana!=C){ #TN - klasy inne niz C1, klasyfowane jako klasy inne niż C1
           macierz_pomylek[k,2]=macierz_pomylek[k,2]+1
-        } else if (klasa_poprawna!=C & klasa_przewidziana==C){ #FP - klasy inne niż C1, klasyfikowane jako jako C1
+        } else if (klasa_poprawna!=C & klasa_przewidziana==C){ #FP - klasy inne niz C1, klasyfikowane jako jako C1
           macierz_pomylek[k,3]=macierz_pomylek[k,3]+1
         }
       }
     }
   }
 }
-macierz_pomylek2<-round(macierz_pomylek/3,2) #bo teraz miałam wyniki dla 3 powtórzeń a my chcemy mieć średnią z nich (zrobione troche inaczej niż w tabelach wyżej ale wcześniej miałam 3 osobne tabele; które potem mogłam połaczyć i dopiero potem podzielić przez 3)
+macierz_pomylek2<-round(macierz_pomylek/3,2) #bo aktualnie mielismy wyniki dla 3 poworzen a zalezy nam na średnniej z nich 
 
-
-
-## DOPIERO TERAZ MOŻNA LICZYĆ WSKAŹNIKI
+## Ostateczene wyliczanie wskaznikow jakosci
 
 #Wyliczenie dla każdej cechy 
 Err<-list()
@@ -143,29 +142,28 @@ NPV<-list()
 
 for(t in 1: dim(macierz_pomylek2)[1]){
   
-  #1. błąd klasyfikatora (FP+FN)/(TP+TN+FP+FN)
+  #1. bład klasyfikatora (FP+FN)/(TP+TN+FP+FN)
   Err[t]<-round((macierz_pomylek2[t,3]+macierz_pomylek2[t,4])/(macierz_pomylek2[t,1]+macierz_pomylek2[t,2]+macierz_pomylek2[t,3]+macierz_pomylek2[t,4]),4)
   
-  # 2. dokładnosć klasyfikatora (TP+TN)/(TP+TN+FP+FN) albo 1-err
+  # 2. dokladnosc klasyfikatora (TP+TN)/(TP+TN+FP+FN) albo 1-err
   Acc[t]<-round((macierz_pomylek2[t,1]+macierz_pomylek2[t,2])/(macierz_pomylek2[t,1]+macierz_pomylek2[t,2]+macierz_pomylek2[t,3]+macierz_pomylek2[t,4]),4)
   
-  # 3. czułość klasyfikatora TPR=(TP)/(TP+FN)
+  # 3. czulosc klasyfikatora TPR=(TP)/(TP+FN)
   Sens[t]<-round(macierz_pomylek2[t,1]/(macierz_pomylek2[t,1]+macierz_pomylek2[t,4]),4)
   
-  # 4. specyficzność klasyfikatora TNR=TN/(TN+FP)
+  # 4. specyficznosc klasyfikatora TNR=TN/(TN+FP)
   Spec[t]<-round(macierz_pomylek2[t,2]/(macierz_pomylek2[t,2]+macierz_pomylek2[t,3]),4)
   
-  # 5. Dodatnia wartość predykcyjna PPV = TP/(TP+FP)
+  # 5. Dodatnia wartosc predykcyjna PPV = TP/(TP+FP)
   PPV[t]<-round(macierz_pomylek2[t,1]/(macierz_pomylek2[t,1]+macierz_pomylek2[t,3]),4)
   
-  # 6. Ujemna wartość predykcyjna NPV = TN/(TN+FN)
+  # 6. Ujemna wartosc predykcyjna NPV = TN/(TN+FN)
   NPV[t]<-round(macierz_pomylek2[t,2]/(macierz_pomylek2[t,2]+macierz_pomylek2[t,4]),1)
 }
 
-#Połączenie z wcześniejszą macierzą 
+#Połączenie z wczesniejsza macierza 
 PODSUMOWANIE<-cbind(poprawna_kolejnosc,unlist(Err),unlist(Acc),unlist(Sens),unlist(Spec),unlist(PPV),unlist(NPV))
 colnames(PODSUMOWANIE)[21:26]<-c("Classification error", "Accuracy","Sensitiviy","Specificity","PPV","NPV")
-
 
 wagi<-c(13,70,237,174,58,36,40,122,40,37,28,38,351,48,448,76,206,74)
 all_w<-as.numeric(PODSUMOWANIE[,23])
